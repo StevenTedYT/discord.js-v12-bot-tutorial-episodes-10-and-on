@@ -76,22 +76,18 @@ client.on("message", async message => {
 
     const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
+    const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
 
-
+    const [, matchedPrefix] = message.content.match(prefixRegex);
     if(prefixRegex.test(message.content)){
-        const args = message.content.slice(prefix.length).trim().split(/ +/g);
-
-        const command = args.shift().toLowerCase();
-
-        if(!client.commands.has(command)) return;
-
-
+    const args = message.content.slice(matchedPrefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
+    if(!client.commands.has(command)) return;
         try {
             client.commands.get(command).run(client, message, args);
 
-        } catch (error){
-            console.error(error);
+        } catch{
+            message.channel.send(`My prefix is: \`${prefix}\``)
         }
     }
 })
